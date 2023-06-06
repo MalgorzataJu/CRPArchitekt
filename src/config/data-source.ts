@@ -1,12 +1,10 @@
 import { DataSourceOptions } from 'typeorm/data-source/DataSourceOptions';
 import { config } from './config';
 import { DataSource } from 'typeorm';
+import { UsersEntity } from '../entities/users.entity';
 
 const entities = [
-  // UsersEntity,
-  // StudentsEntity,
-  // ReservedStudentsEntity,
-  // RecruitersEntity,
+  UsersEntity,
 ];
 
 export const dataSourceOptions: DataSourceOptions = {

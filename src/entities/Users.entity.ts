@@ -1,3 +1,4 @@
+import { UserRole } from 'src/types';
 import {
   CreateDateColumn,
   Column,
@@ -5,12 +6,6 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
-
-export enum UserRole {
-  Admin = 'Admin',
-  Employee = 'Employee',
-  Boss = 'Boss',
-}
 
 @Entity()
 export class UsersEntity extends BaseEntity {
@@ -28,8 +23,8 @@ export class UsersEntity extends BaseEntity {
   isActive: boolean;
 
   @Column({
-    type: 'enum',
-    enum: UserRole,
+    default: UserRole.Employee,
+    nullable: true
   })
   role: UserRole;
 

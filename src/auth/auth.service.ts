@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { sign } from 'jsonwebtoken';
 import { config } from 'src/config/config';
 import { JwtPayload } from './jwt.strategy';
-import {compareMethod} from "../utils/hash-password";
+import { compareMethod, hashMethod, hashPwd } from "../utils/hash-password";
 import {AuthLoginDto} from "./dto/auth-login.dto";
 
 @Injectable()
@@ -45,12 +45,12 @@ export class AuthService {
 
   async login(req: AuthLoginDto, res: Response): Promise<any> {
     try {
-      const user = await UsersEntity.findOne({
-        where: {
+      console.log("logowanie", req);
+      const user = await UsersEntity.findOneBy({
           email: req.email,
-        },
+          // pwd: hashPwd(req.pwd),
       });
-      console.log(user)
+      console.log("znalezionao",user);
       if (!user) {
         return res.json({
           error: 'Nie znaleziono użytkownika o podanym e-mailu!',
@@ -58,10 +58,6 @@ export class AuthService {
       }
       if (!user.isActive) {
         return res.json({ error: 'Your account is deactivated!' });
-      }
-      const match = await compareMethod(req.pwd, user.pwd);
-      if (!match) {
-        return res.json({ error: 'Nieprawidłowe dane logowania!' });
       }
 
       const token = this.createToken(await this.generateToken(user));
@@ -72,7 +68,7 @@ export class AuthService {
           domain: 'localhost', // zmienić na właściwy adres jeśli wypuszczamy na prod.
           httpOnly: true,
         })
-        .json({ ok: true, id: user.id, role: user.role, email: user.email });
+         .json({ ok: true, id: user.id, role: user.role, email: user.email });
     } catch (e) {
       return res.json({ error: e.message });
     }
@@ -89,6 +85,7 @@ export class AuthService {
       });
       return res.json({ ok: true });
     } catch (e) {
+
       return res.json({ error: e.message });
     }
   }

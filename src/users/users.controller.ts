@@ -16,6 +16,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private userService: UsersService) {}
 
+
   // @Get('/email/:id')
   // async getUserEmail(@Param('id') id: string) {
   //   return this.userService.getUserEmail(id);

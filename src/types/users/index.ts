@@ -1,3 +1,3 @@
 export * from './students';
 export * from './users';
-export * from './sorting';
+export * from './role';

@@ -45,12 +45,10 @@ export class AuthService {
 
   async login(req: AuthLoginDto, res: Response): Promise<any> {
     try {
-      console.log("logowanie", req);
       const user = await UsersEntity.findOneBy({
           email: req.email,
-          // pwd: hashPwd(req.pwd),
+          pwd: hashPwd(req.pwd),
       });
-      console.log("znalezionao",user);
       if (!user) {
         return res.json({
           error: 'Nie znaleziono użytkownika o podanym e-mailu!',

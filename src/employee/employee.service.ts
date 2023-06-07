@@ -7,7 +7,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeEntity } from '../entities/Employee.entity';
 import { UsersEntity } from '../entities/users.entity';
 import { Repository } from 'typeorm';
-import { EmployeeResAllInfo, ListEmployeeResAll } from "../types/employee";
+import { CreateEmployeeRes, EmployeeResAllInfo, ListEmployeeResAll } from "../types/employee";
+import { RegisterEmployeeRegDto } from "./dto/registerEmployeeReg.dto";
+import { hashMethod } from "../utils/hash-password";
 
 
 @Injectable()
@@ -78,7 +80,7 @@ export class EmployeeService {
   //
   //   const newUser = await EmployeeEntity.create({
   //     ...userDetails,
-  //     password: hashPwd(password),
+  //     password: hashMethod(password),
   //     createdAt: new Date(),
   //   });
   //   const { id } = await EmployeeEntity.save(newUser);

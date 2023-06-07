@@ -1,5 +1,5 @@
-import * as crypto from 'crypto';
 import { compare, genSalt, hash } from 'bcrypt';
+import * as crypto from "crypto";
 import { config } from "../config/config";
 
 export async function hashMethod(password: string): Promise<string> {
@@ -9,10 +9,11 @@ export async function hashMethod(password: string): Promise<string> {
 }
 
 export const hashPwd = (p: string): string => {
-  const hmac = crypto.createHmac('sha512', `config.JWT_SECRET`);
+  const hmac = crypto.createHmac('sha512', config.JWT_SECRET);
   hmac.update(p);
   return hmac.digest('hex');
 };
+
 
 export async function compareMethod(
   password: string,

@@ -1,5 +1,3 @@
-
-
 export interface AvailableStudentData {
   id: string;
   fullName: string;

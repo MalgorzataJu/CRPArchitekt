@@ -1,4 +1,3 @@
-import { UserRole } from 'src/types';
 import {
   CreateDateColumn,
   Column,
@@ -6,11 +5,12 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
+import { UserRole } from "../types";
 
 @Entity()
 export class UsersEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   @Column({
     unique: true,

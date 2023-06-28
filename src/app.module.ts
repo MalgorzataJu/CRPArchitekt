@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { ConsoleModule } from 'nestjs-console';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmployeeModule } from "./employee/employee.module";
+import {ProjectModule} from "./project/project.module";
 
 
 @Module({
@@ -12,6 +13,7 @@ import { EmployeeModule } from "./employee/employee.module";
     ...TypeormImports,
     UsersModule,
     EmployeeModule,
+    ProjectModule,
     ConsoleModule,
     ScheduleModule.forRoot(),
   ],

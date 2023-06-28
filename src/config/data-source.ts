@@ -11,7 +11,7 @@ import { KindOfWorkEntity } from "../entities/Kind-of-work.entity";
 const entities = [
   UsersEntity,
   EmployeeEntity,
-  // ProjectEntity,
+  ProjectEntity,
   // TaskEntity,
   // HourEntity,
   // KindOfWorkEntity,

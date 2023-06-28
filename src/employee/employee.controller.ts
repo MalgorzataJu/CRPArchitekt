@@ -34,24 +34,24 @@ export class EmployeeController {
     return this.employeeService.allEmployee();
   }
 
-  @Get('/profile')
-  @UseGuards(AuthGuard('jwt'), RoleGuard)
-  @Roles(UserRole.Employee)
-  async getStudentProfile(@Req() req: RequestWithUser) {
-    const empolyeeProfile = await this.employeeService.getOne(
-      req.user.id,
-   );
-   if (!empolyeeProfile) {
-     throw new BadRequestException(`Guard nie wpuści, ale obsługa błędu jest`);
-   }
-   return empolyeeProfile;
-  }
+  // @Get('/profile')
+  // @UseGuards(AuthGuard('jwt'), RoleGuard)
+  // @Roles(UserRole.Employee)
+  // async getStudentProfile(@Req() req: RequestWithUser) {
+  //   const empolyeeProfile = await this.employeeService.getOne(
+  //     req.user.id,
+  //  );
+  //  if (!empolyeeProfile) {
+  //    throw new BadRequestException(`Guard nie wpuści, ale obsługa błędu jest`);
+  //  }
+  //  return empolyeeProfile;
+  // }
 
-  @Get('/stat/:employeeid')
-  getAllForEmployeeById(
-  @Param('employeeid') id: string) {
-    // return this.employeeService.getAllForEmployee(id);
-  }
+  // @Get('/stat/:employeeid')
+  // getAllForEmployeeById(
+  // @Param('employeeid') id: string) {
+  //   // return this.employeeService.getAllForEmployee(id);
+  // }
   //
   // @Post('/register')
   // createEmployee(@Body() newUserRegister: RegisterEmployeeRegDto) {

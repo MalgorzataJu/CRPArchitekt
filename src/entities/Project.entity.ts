@@ -44,11 +44,11 @@ export class ProjectEntity extends BaseEntity implements ProjectItemEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  // @OneToMany((type) => HourEntity, (entity) => entity.project.id)
-  // @JoinTable()
-  // hours: HourEntity[];
-  //
-  // @OneToMany((type) => TaskEntity, (entity) => entity.project.id)
-  // @JoinTable()
-  // tasks: HourEntity[];
+  @OneToMany((type) => HourEntity, (entity) => entity.project.id)
+  @JoinTable()
+  hours: HourEntity[];
+
+  @OneToMany((type) => TaskEntity, (entity) => entity.project.id)
+  @JoinTable()
+  tasks: HourEntity[];
 }

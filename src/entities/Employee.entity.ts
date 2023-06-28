@@ -42,11 +42,11 @@ export class EmployeeEntity extends BaseEntity implements CreateEmployeeDto{
   })
   createdAt: Date;
 
-  // @OneToMany((type) => HourEntity, (entity) => entity.employee.id)
-  // @JoinTable()
-  // hours: HourEntity[];
-  //
-  // @OneToMany((type) => TaskEntity, (entity) => entity.employee.id)
-  // @JoinTable()
-  // tasks: TaskEntity[];
+  @OneToMany((type) => HourEntity, (entity) => entity.employee.id)
+  @JoinTable()
+  hours: HourEntity[];
+
+  @OneToMany((type) => TaskEntity, (entity) => entity.employee.id)
+  @JoinTable()
+  tasks: TaskEntity[];
 }

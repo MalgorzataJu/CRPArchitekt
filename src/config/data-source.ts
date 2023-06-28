@@ -12,10 +12,9 @@ const entities = [
   UsersEntity,
   EmployeeEntity,
   ProjectEntity,
-  // TaskEntity,
-  // HourEntity,
-  // KindOfWorkEntity,
-
+  TaskEntity,
+  HourEntity,
+  KindOfWorkEntity,
 ];
 
 export const dataSourceOptions: DataSourceOptions = {

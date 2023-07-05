@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { CreateEmployeeRes, EmployeeResAllInfo, ListEmployeeResAll } from "../types/employee";
 import { RegisterEmployeeRegDto } from "./dto/registerEmployeeReg.dto";
 import { hashMethod } from "../utils/hash-password";
+import {UpdateEmployeeDto} from "./dto/updateUser.dto";
 
 
 @Injectable()
@@ -30,7 +31,6 @@ export class EmployeeService {
     const employee = await EmployeeEntity.find({
       relations: ['user'],
     });
-    console.log(employee);
 
     return employee.map((emp, index) => {
       const employee = {
@@ -50,7 +50,7 @@ export class EmployeeService {
   async getOne(id: string): Promise<EmployeeResAllInfo> {
     const employee = await EmployeeEntity.findOne({
       where:{
-        user: { id }
+        id: id,
       },
       relations: ['user'],
     });
@@ -90,27 +90,29 @@ export class EmployeeService {
   //   return this.filter(newUser);
   // }
 
-  // async updateEmployee(id: string, updateUserDetail: UpdateEmployeeDto) {
-  //
-  //   await EmployeeEntity.update(
-  //     { id },
-  //     {
-  //       email: updateUserDetail.email,
-  //     });
-  //
-  //   const updateEmployee =  await EmployeeEntity.findOne({where:{ id }, relations:['profile']});
-  //
-  //   await this.userRepository.update(
-  //     { id:updateEmployee.user.id },
-  //     {
-  //             name: updateUserDetail.name,
-  //             lastname: updateUserDetail.lastname,
-  //             hourly: updateUserDetail.hourly,
-  //     },
-  //     );
-  //
-  //   return updateEmployee;
-  // }
+  async updateEmployee(id: string, updateUserDetail: UpdateEmployeeDto) {
+
+    await EmployeeEntity.update(
+      { id },
+      {
+        firstName: updateUserDetail.firstName,
+        lastName: updateUserDetail.lastName,
+        tel: updateUserDetail.tel,
+        hourly: updateUserDetail.hourly,
+      });
+
+    const updateEmployee =  await EmployeeEntity.findOne({where:{ id }, relations:['user']});
+
+    await this.userRepository.update(
+      { id:updateEmployee.user.id },
+      {
+
+              email: updateUserDetail.email,
+      },
+      );
+
+    return updateEmployee;
+  }
 
   async deleteEmployee(id: string) {
     return await EmployeeEntity.delete({ id });

@@ -18,13 +18,13 @@ import { RoleGuard } from "../auth/role/role.guard";
 import RequestWithUser from "../utils/interfaces";
 import { UsersService } from "../users/users.service";
 import { Roles } from '../auth/roles/roles.decorator';
+import {UpdateEmployeeDto} from "./dto/updateUser.dto";
 
 @Controller('/employee')
 // @UseInterceptors(MyTimeoutInterceptor)
 export class EmployeeController {
   constructor(
     @Inject(EmployeeService) private employeeService: EmployeeService,
-    // @Inject(UsersService) private userService: UsersService,
   ) {}
 
   @Get('/')
@@ -34,37 +34,41 @@ export class EmployeeController {
     return this.employeeService.allEmployee();
   }
 
-  // @Get('/profile')
-  // @UseGuards(AuthGuard('jwt'), RoleGuard)
-  // @Roles(UserRole.Employee)
-  // async getStudentProfile(@Req() req: RequestWithUser) {
-  //   const empolyeeProfile = await this.employeeService.getOne(
-  //     req.user.id,
-  //  );
-  //  if (!empolyeeProfile) {
-  //    throw new BadRequestException(`Guard nie wpuści, ale obsługa błędu jest`);
-  //  }
-  //  return empolyeeProfile;
-  // }
+  @Put('/:id')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss)
+  updateEmployeeById(
+      @Param('id') id: string,
+      @Body() updateUserDto: UpdateEmployeeDto,
+  ) {
+    this.employeeService.updateEmployee(id, updateUserDto);
+  }
 
-  // @Get('/stat/:employeeid')
-  // getAllForEmployeeById(
-  // @Param('employeeid') id: string) {
-  //   // return this.employeeService.getAllForEmployee(id);
-  // }
-  //
+  @Get('/:id')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss)
+  async getStudentProfile(
+      @Param('id') id: string
+  ) {
+    const empolyeeProfile = await this.employeeService.getOne(id);
+
+   if (!empolyeeProfile) {
+     throw new BadRequestException(`Guard nie wpuści, ale obsługa błędu jest`);
+   }
+   return empolyeeProfile;
+  }
+
+  @Get('/stat/:employeeid')
+  getAllForEmployeeById(
+  @Param('employeeid') id: string) {
+    // return this.employeeService.getAllForEmployee(id);
+  }
+
   // @Post('/register')
   // createEmployee(@Body() newUserRegister: RegisterEmployeeRegDto) {
   //   return this.employeeService.createEmployee(newUserRegister);
   // }
   //
-  // @Put('/:id')
-  // updateEmployeeById(
-  //   @Param('id') id: string,
-  //   @Body() updateUserDto: UpdateEmployeeDto,
-  // ) {
-  //   this.employeeService.updateEmployee(id, updateUserDto);
-  // }
   // @Delete('/:id')
   // deleteEmployeeById(@Param('id') id: string) {
   //  return this.employeeService.deleteEmployee(id);

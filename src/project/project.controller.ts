@@ -23,28 +23,28 @@ export class ProjectController {
     return this.projectService.listAll();
   }
 
-  // @Get('/:id')
-  // getOneProject(
-  //   @Param('id') id: string,
-  // ): Promise<ProjectItemEntity> {
-  //   return this.projectService.getOneProject(id);
-  // }
-  //
-  // @Post('/')
-  // createProject(@Body() newProject: CreateProjectDto) {
-  //   return this.projectService.createProject(newProject);
-  // }
-  //
-  // @Put('/:id')
-  // updateProjectById(
-  //   @Param('id') id: string,
-  //   @Body() updateProject: UpdateProjectDto,
-  // ) {
-  //   this.projectService.updateProject(id, updateProject);
-  // }
-  //
-  // @Delete('/:id')
-  // deleteProjectById(@Param('id') id: string) {
-  //   this.projectService.deleteProject(id);
-  // }
+  @Get('/:id')
+  getOneProject(
+    @Param('id') id: string,
+  ): Promise<ProjectItemEntity> {
+    return this.projectService.getOneProject(id);
+  }
+
+  @Post('/')
+  createProject(@Body() newProject: CreateProjectDto) {
+    return this.projectService.createProject(newProject);
+  }
+
+  @Put('/:id')
+  updateProjectById(
+    @Param('id') id: string,
+    @Body() updateProject: UpdateProjectDto,
+  ) {
+    this.projectService.updateProject(id, updateProject);
+  }
+
+  @Delete('/:id')
+  deleteProjectById(@Param('id') id: string) {
+    this.projectService.deleteProject(id);
+  }
 }

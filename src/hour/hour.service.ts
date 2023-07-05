@@ -30,7 +30,6 @@ export class HourService {
     const hours = await HourEntity.find({
       relations: ['project', 'employee', 'kindofwork'],
     });
-
     return hours.map((hour, index) => {
       const h = {
         id: hour.id,
@@ -60,7 +59,7 @@ export class HourService {
     }));
 
     const employeeList = (await EmployeeEntity.find({
-      relations: ['profile']
+      relations: ['user']
     }))
       .map((el) => ({
       id: el.id,
@@ -167,7 +166,6 @@ export class HourService {
   async createHour(hour: CreateHourDto): Promise< {isSuccess: boolean} > {
 
     const { projectId, employeeId, quantity, kindofworkId } = hour;
-
     const project = await this.projectService.getOneProject(projectId);
     const employee = await this.employeeService.getOne(employeeId);
     const kindOfWork = await this.kindOfWorkService.getOneKindOfWork(kindofworkId);
@@ -189,9 +187,10 @@ export class HourService {
     const newHour = await HourEntity.create({
           ...hour,
           quantity: Number(quantity),
-          project,
-          employee,
+          project: project,
+          employee : employee,
           kindofwork: kindOfWork,
+          timeAd: new Date(),
     });
 
     await HourEntity.save(newHour);

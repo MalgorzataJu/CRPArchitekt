@@ -11,26 +11,27 @@ import {
 import { HourService } from './hour.service';
 import { CreateHourDto } from './dto/createHour.dto';
 import { UpdateHourDto } from './dto/updateHour.dto';
-import { ListAllToAddHoursRes, ListHourResAll } from "../types";
+import {ListAllToAddHoursRes, ListHourResAll, UserRole} from "../types";
 import { MyTimeoutInterceptor } from "../interceptors/my-timeout.interceptor";
 import { AuthGuard } from "@nestjs/passport";
+import {RoleGuard} from "../auth/role/role.guard";
+import {Roles} from "../auth/roles/roles.decorator";
 
 @Controller('/hour')
-@UseGuards(AuthGuard('jwt'))
 export class HourController {
 
   constructor(@Inject(HourService) private hourService: HourService) {}
 
   @Get('/')
-  @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(MyTimeoutInterceptor)
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss)
   getHour(): Promise<ListHourResAll[]> {
     return this.hourService.listAll();
   }
 
   @Get('/add')
-  @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(MyTimeoutInterceptor)
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss)
   listProjectEmployeeAnKindOfWorkToAddHours(): Promise<ListAllToAddHoursRes> {
     return this.hourService.listProjectEmployeeKindeOfWorkAll();
   }
@@ -47,6 +48,8 @@ export class HourController {
   }
 
   @Post('/')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss)
   createHour(
     @Body() newHour: CreateHourDto,
   ) {

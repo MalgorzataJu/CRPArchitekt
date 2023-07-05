@@ -41,8 +41,6 @@ export class HourEntity extends BaseEntity implements HourItemEntity {
   date: Date;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  timeAd: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
 }

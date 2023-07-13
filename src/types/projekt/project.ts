@@ -33,6 +33,7 @@ export interface CreateProject {
 export interface ListProjectRes {
   place: number;
   project: ProjectSimpleRes;
+  // hours: string[];
 }
 
 export type ListProjectSimpleResAll = ListProjectRes[];

@@ -1,44 +1,42 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Inject,
-  Param,
-  Post,
-  Put, UseGuards, UseInterceptors
-} from "@nestjs/common";
-import { HourService } from './hour.service';
-import { CreateHourDto } from './dto/createHour.dto';
-import { UpdateHourDto } from './dto/updateHour.dto';
-import {ListAllToAddHoursRes, ListHourResAll, UserRole} from "../types";
-import { MyTimeoutInterceptor } from "../interceptors/my-timeout.interceptor";
-import { AuthGuard } from "@nestjs/passport";
+import {Body, Controller, Delete, Get, Inject, Param, Post, Put, Req, UseGuards} from "@nestjs/common";
+import {HourService} from './hour.service';
+import {CreateHourDto} from './dto/createHour.dto';
+import {UpdateHourDto} from './dto/updateHour.dto';
+import {ListAllToAddHoursRes, ListHourResAll, RequestWithEmployee, UserRole} from "../types";
+import {AuthGuard} from "@nestjs/passport";
 import {RoleGuard} from "../auth/role/role.guard";
 import {Roles} from "../auth/roles/roles.decorator";
+import {EmployeeService} from "../employee/employee.service";
 
 @Controller('/hour')
 export class HourController {
 
-  constructor(@Inject(HourService) private hourService: HourService) {}
+  constructor(
+      @Inject(HourService) private hourService: HourService,
+      @Inject(EmployeeService) private employeeService: EmployeeService,
+
+  ) {}
 
   @Get('/')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
-  @Roles(UserRole.Boss)
-  getHour(): Promise<ListHourResAll[]> {
-    return this.hourService.listAll();
+  @Roles(UserRole.Boss,UserRole.Employee)
+  async getHour(@Req() req: RequestWithEmployee): Promise<ListHourResAll[]> {
+
+    if (req.user.role == UserRole.Boss)
+      return this.hourService.listAll();
+
+    if (req.user.role == UserRole.Employee) {
+      const employeeId =await this.employeeService.getEmplyeeWitchUserId(req.user.id);
+      return this.hourService.listAllHourByEmplooyee(employeeId)
+    }
+
   }
 
   @Get('/add')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
-  @Roles(UserRole.Boss)
+  @Roles(UserRole.Boss,UserRole.Employee)
   listProjectEmployeeAnKindOfWorkToAddHours(): Promise<ListAllToAddHoursRes> {
     return this.hourService.listProjectEmployeeKindeOfWorkAll();
-  }
-
-  @Get('/stat/:employeeId')
-  getEmployeeStat( @Param('employeeId') id: string){
-    return this.hourService.getAllStatHourByEmplooyee(id);
   }
 
   @Get('/statProject/:projectId')
@@ -49,7 +47,7 @@ export class HourController {
 
   @Post('/')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
-  @Roles(UserRole.Boss)
+  @Roles(UserRole.Boss,UserRole.Employee)
   createHour(
     @Body() newHour: CreateHourDto,
   ) {

@@ -64,6 +64,17 @@ export class EmployeeService {
     }
   }
 
+  async getEmplyeeWitchUserId(id:string):Promise<string>{
+    const employee = await EmployeeEntity.findOne({
+      where:{
+        user: {
+          id: id,
+        },
+        },
+      relations: ['user'],
+    });
+    return employee.id;
+  }
 
   // async createEmployee(userDetails: RegisterEmployeeRegDto): Promise<CreateEmployeeRes> {
   //   const { email, password } = userDetails;

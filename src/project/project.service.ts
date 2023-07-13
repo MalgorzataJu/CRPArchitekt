@@ -3,17 +3,41 @@ import { ProjectEntity } from '../entities/Project.entity';
 import { CreateProjectDto } from "./dto/createProject.dto";
 import { UpdateProjectDto } from "./dto/updateProject.dto";
 import {ListProjectSimpleResAll} from "../types";
+import {HourEntity} from "../entities/Hour.entity";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
 
 
 @Injectable()
 export class ProjectService {
-
-
+  // constructor(
+  //     @InjectRepository(HourEntity)
+  //     private usersRepository: Repository<HourEntity>
+  // ){}
   async listAll(): Promise<ListProjectSimpleResAll>{
 
     const projects = await ProjectEntity.find();
+    // const hours = await HourEntity.find(
+    //     {
+    //       relations: ['project','kindofwork'],
+    //     }
+    // );
+    const  listOfHour = projects.map( (p, index) => {
 
-    return projects.map( (p, index) => {
+      // const  hoursListForProject =  await HourEntity
+      //     .createQueryBuilder('hours')
+      //     .select([
+      //       'hours.id',
+      //       'hours.kindofwork',
+      //       'hours.employee',
+      //       'hours.project',
+      //       'hours.quantity',
+      //     ])
+      //     .innerJoin('kinds_of_work', 'kow', 'kow.id=hours.kindofwork')
+      //     .where('hours.project = :id', { id: p.id })
+      //     // .printSql()
+      //     .getRawMany();
+
       const project = {
         id: p.id,
         name: p.name,
@@ -27,8 +51,10 @@ export class ProjectService {
       return {
         place: index + 1,
         project: project,
+        // hours: hoursListForProject
       };
     });
+    return listOfHour;
   }
 
   async getOneProject(id: string): Promise<ProjectEntity> {

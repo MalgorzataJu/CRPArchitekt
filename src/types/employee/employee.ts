@@ -1,3 +1,6 @@
+import {EmployeeEntity} from "../../entities/Employee.entity";
+import {UsersEntity} from "../../entities/Users.entity";
+
 export type CreateEmployeeProfileParams = {
   name: string;
   lastname: string;
@@ -11,7 +14,9 @@ export type RegisterEmployeeRes = {
   confirm: string;
   hourly: number;
 }
-
+export interface RequestWithEmployee {
+  user: UsersEntity;
+}
 export type CreateEmployeeRes = {
   id: string;
   email:string;

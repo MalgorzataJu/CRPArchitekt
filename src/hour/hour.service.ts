@@ -45,6 +45,38 @@ export class HourService {
       };
     });
   }
+  async listAllHourByEmplooyee(employeeid: string) {
+    const hours = await HourEntity
+        .createQueryBuilder('hours')
+        .select( [
+          'hours.id',
+          'hours.quantity',
+          'hours.date',
+        ])
+        .addSelect('kow.hourstype', 'kinds_of_work')
+        .addSelect('project.name', 'project')
+        .addSelect('empl.firstName', 'employees')
+        .innerJoin('kinds_of_work', 'kow', 'kow.id = hours.kindofwork')
+        .innerJoin('projects', 'project', 'project.id = hours.project')
+        .innerJoin('employees', 'empl', 'empl.id = hours.employee')
+        .where('hours.employee = :id', {id: employeeid })
+        .getRawMany();
+
+    return hours.map((hour, index) => {
+      const h = {
+        id: hour.hours_id,
+        projectId: hour.project,
+        employeeId: hour.employees,
+        kindofworkId: hour.kind_of_work,
+        quantity: hour.hours_quantity,
+        date: new Date(hour.hours_date).toLocaleDateString(),
+      };
+      return {
+        place: index + 1,
+        hour: h,
+      };
+    });
+  }
 
   async listProjectEmployeeKindeOfWorkAll(): Promise<ListAllToAddHoursRes> {
 
@@ -73,23 +105,6 @@ export class HourService {
     };
   }
 
-  async getAllForEmplooyee(enployeeId: string) {
-    const employee = await this.employeeService.getOne(enployeeId);
-    if (!employee) {
-      throw new Error('Employeee not found!');
-    }
-
-    const hours = HourEntity.find({
-      where: {
-        employee: {
-          id: employee.id,
-        },
-      },
-      relations: ['project', 'employee', 'kindofwork'],
-    });
-    return hours;
-  }
-
   async getAllForProject(id: string) {
     const project = await this.projectService.getOneProject( id );
     console.log(project);
@@ -97,23 +112,10 @@ export class HourService {
   }
 
   async getAllStatByProject(projectId: string): Promise<GetTotalProjectHoursResponse> {
-
-
     return 123;
   }
 
-  async getAllStatHourByEmplooyee(employeeid: string) {
-    const hours = await HourEntity.createQueryBuilder()
-      .select('hours.quantity')
-      .from(HourEntity, 'hours')
-      .where('hours.employee LIKE :employeeid', {
-        employeeid: employeeid,
-      })
-      .getMany();
-    const hourSum = hours.reduce((prev, curr) => prev + curr.quantity, 0);
 
-    return hours;
-  }
 
   // // @TODO() do poprawy
   // async getAllStatHourByEmplooyeeandProject(

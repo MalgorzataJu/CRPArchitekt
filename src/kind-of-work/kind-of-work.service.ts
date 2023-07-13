@@ -7,7 +7,13 @@ import {KindOfWorkItemEntity} from "../types";
 export class KindOfWorkService {
 
   async findKindOfWork() {
-    return await KindOfWorkEntity.find();
+   const kows =  await KindOfWorkEntity.find();
+    return   kows.map((kind, index)=> {
+      return {
+        kow: kind,
+        place: index + 1,
+      }
+    });
   }
 
   async getOneKindOfWork(id: string): Promise<KindOfWorkEntity> {
@@ -17,16 +23,15 @@ export class KindOfWorkService {
     const newKinofwork = KindOfWorkEntity.create({
       ...kindofWork,
     });
-    console.log(newKinofwork);
     return KindOfWorkEntity.save(newKinofwork);
-  }
+  }async
 
-  async updateKindOfWork(id: string, updatenewKindofWorkDetail: KindOfWorkItemEntity) {
-    return await KindOfWorkEntity.update(
-      { id },
-      { ...updatenewKindofWorkDetail },
-    );
-  }
+  // async updateKindOfWork(id: string, updatenewKindofWorkDetail: KindOfWorkItemEntity) {
+  //   return await KindOfWorkEntity.update(
+  //     { id },
+  //     { ...updatenewKindofWorkDetail },
+  //   );
+  // }
 
   async deleteKindOfWork(id: string) {
     return await KindOfWorkEntity.delete({ id });

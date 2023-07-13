@@ -1,15 +1,15 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
-  Inject, Post, UseGuards
+  Inject, Param, Post, UseGuards
 } from "@nestjs/common";
 import { KindOfWorkService } from "./kind-of-work.service";
 import { CreateKindofworkDto } from "./dto/createKindofwork.dto";
 import {AuthGuard} from "@nestjs/passport";
 import {RoleGuard} from "../auth/role/role.guard";
 import {Roles} from "../auth/roles/roles.decorator";
-import {UserRole} from "../types";
+import {ListKindOfWorkRes, UserRole} from "../types";
 
 @Controller('/kindofwork')
 export class KindOfWorkController {
@@ -20,7 +20,7 @@ export class KindOfWorkController {
   @Get('/')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Roles(UserRole.Boss,UserRole.Employee)
-  getkindOfWork() {
+  getkindOfWork(): Promise <ListKindOfWorkRes[]>  {
     return this.kindOfWorkService.findKindOfWork();
   }
 
@@ -40,11 +40,11 @@ export class KindOfWorkController {
   // ) {
   //   this.kindOfWorkService.updateKindOfWork(id, updateKindOfWork);
   // }
-  // @Delete('/:id')
-// @UseGuards(AuthGuard('jwt'), RoleGuard)
-// @Roles(UserRole.Boss,UserRole.Employee)
-  // deleteUserById(@Param('id') id: string) {
-  //   this.kindOfWorkService.deleteKindOfWork(id);
-  // }
+  @Delete('/:id')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss,UserRole.Employee)
+  deleteUserById(@Param('id') id: string) {
+    this.kindOfWorkService.deleteKindOfWork(id);
+  }
 
 }

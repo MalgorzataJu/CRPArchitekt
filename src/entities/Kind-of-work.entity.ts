@@ -17,6 +17,9 @@ export class KindOfWorkEntity extends BaseEntity {
   })
   hourstype: string;
 
+  @Column()
+  price: number;
+
   @OneToMany((type) => HourEntity, (entity) => entity.kindofwork.id)
   @JoinTable()
   hours: HourEntity[];

@@ -1,6 +1,6 @@
-import { EmployeeRes, EmployeeResNAme } from "../employee";
-import { ProjectNameRes, ProjectSimpleRes } from "../projekt";
-import { KindOfWorkItemEntity } from "../kindOfWork";
+import {  EmployeeResNAme } from "../employee";
+import { ProjectNameRes } from "../projekt";
+import { KindOfWorkItemEntityRes} from "../kindOfWork";
 
 export interface CreateHour {
     projectId: string;
@@ -42,6 +42,6 @@ export interface ListHourResAll {
 export interface ListAllToAddHoursRes{
     employeeList:EmployeeResNAme[],
     projectList: ProjectNameRes[],
-    kindofworkList:KindOfWorkItemEntity[],
+    kindofworkList:KindOfWorkItemEntityRes[],
 }
 

@@ -1,4 +1,5 @@
 import { UserRole } from "../../types";
+import {UsersEntity} from "../../entities/Users.entity";
 
 export class CreateUserDto{
   id: string;
@@ -11,3 +12,6 @@ export class CreateUserDto{
   createdAt: Date;
 }
 
+export interface RequestWithEmployee {
+  user: UsersEntity;
+}

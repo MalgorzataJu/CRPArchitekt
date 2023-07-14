@@ -29,11 +29,15 @@ export interface CreateProject {
   endDate: string;
   quantityHours: number;
 }
-
+export interface ListKindOfHourForProject {
+  kindofwork: string;
+  sumKindOfWork: number;
+}
 export interface ListProjectRes {
   place: number;
   project: ProjectSimpleRes;
-  // hours: string[];
+  hours: ListKindOfHourForProject[];
+  sumOfDone: number;
 }
 
 export type ListProjectSimpleResAll = ListProjectRes[];

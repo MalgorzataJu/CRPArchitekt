@@ -7,6 +7,7 @@ import { MyTimeoutInterceptor } from "../interceptors/my-timeout.interceptor";
 import {ListProjectSimpleResAll, ProjectItemEntity, UserRole} from "../types";
 import {RoleGuard} from "../auth/role/role.guard";
 import {Roles} from "../auth/roles/roles.decorator";
+import {HourService} from "../hour/hour.service";
 
 @Controller('/project')
 @UseGuards(AuthGuard('jwt'))
@@ -18,7 +19,7 @@ export class ProjectController {
   @Get('/')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Roles(UserRole.Boss,UserRole.Employee)
-  getProject(): Promise<ListProjectSimpleResAll> {
+  async getProject(): Promise<ListProjectSimpleResAll> {
     return this.projectService.listAll();
   }
 

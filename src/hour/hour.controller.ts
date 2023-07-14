@@ -2,11 +2,12 @@ import {Body, Controller, Delete, Get, Inject, Param, Post, Put, Req, UseGuards}
 import {HourService} from './hour.service';
 import {CreateHourDto} from './dto/createHour.dto';
 import {UpdateHourDto} from './dto/updateHour.dto';
-import {ListAllToAddHoursRes, ListHourResAll, RequestWithEmployee, UserRole} from "../types";
+import {ListAllToAddHoursRes, ListHourResAll, UserRole} from "../types";
 import {AuthGuard} from "@nestjs/passport";
 import {RoleGuard} from "../auth/role/role.guard";
 import {Roles} from "../auth/roles/roles.decorator";
 import {EmployeeService} from "../employee/employee.service";
+import {RequestWithEmployee} from "../users/dto/createUser.dto";
 
 @Controller('/hour')
 export class HourController {
@@ -39,11 +40,13 @@ export class HourController {
     return this.hourService.listProjectEmployeeKindeOfWorkAll();
   }
 
-  @Get('/statProject/:projectId')
-  getProjectHoursStat( @Param('projectId') id: string){
-    // console.log(id);
-    return this.hourService.getAllForProject(id);
-  }
+  // @Get('/statProject/:projectId')
+  // @UseGuards(AuthGuard('jwt'), RoleGuard)
+  // @Roles(UserRole.Boss,UserRole.Employee)
+  // getProjectHoursStat( @Param('projectId') id: string){
+  //   // console.log(id);
+  //   return this.hourService.getAllForProject(id);
+  // }
 
   @Post('/')
   @UseGuards(AuthGuard('jwt'), RoleGuard)

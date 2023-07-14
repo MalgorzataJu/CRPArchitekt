@@ -78,6 +78,17 @@ export class HourService {
     });
   }
 
+  async getAllForProject(id: string) {
+    const project = await this.projectService.getOneProject( id );
+    console.log(project);
+  }
+
+  //zliczanie wykonanych godzin dla projektu wg rodzaju godzin
+  async countHourForProject(id: string){
+    const hours = await HourEntity.findBy({project:{id}})
+    console.log(hours)
+  }
+
   async listProjectEmployeeKindeOfWorkAll(): Promise<ListAllToAddHoursRes> {
 
     const projectList = (await ProjectEntity.find()).map((el) => ({
@@ -105,65 +116,9 @@ export class HourService {
     };
   }
 
-  async getAllForProject(id: string) {
-    const project = await this.projectService.getOneProject( id );
-    console.log(project);
-
-  }
-
   async getAllStatByProject(projectId: string): Promise<GetTotalProjectHoursResponse> {
     return 123;
   }
-
-
-
-  // // @TODO() do poprawy
-  // async getAllStatHourByEmplooyeeandProject(
-  //   employeeid: string,
-  //   projectid: string,
-  // ) {
-  //   const hours = await HourEntity.createQueryBuilder()
-  //     .select('hours')
-  //     .from(HourEntity, 'hours')
-  //     .where('hours.employee LIKE :employeeid', {
-  //       employeeid: employeeid,
-  //     })
-  //     // .where('hours.project LIKE :projectid', {
-  //     //   projectid: '44',
-  //     // })
-  //     // .leftJoin()
-  //     .getMany();
-  //   console.log(hours);
-  //   return hours;
-  //   // return 'hours';
-  // }
-  //
-  // async getAllForProject(
-  //   employeeId: string,
-  //   projectId: string,
-  // ) {
-  //   const employee = await this.employeeService.getOne(employeeId);
-  //   if (!employee) {
-  //     throw new Error('Employeee not found!');
-  //   }
-  //   const project = await this.projectService.getOneProject(projectId);
-  //   if (!project) {
-  //     throw new Error('Project not found!');
-  //   }
-  //
-  //   const hours = HourEntity.find({
-  //     where: {
-  //       employee: {
-  //         id: employee.id,
-  //       },
-  //       project: {
-  //         id: project.id,
-  //       },
-  //     },
-  //     relations: ['project', 'employee', 'kindofwork'],
-  //   });
-  //   return hours;
-  // }
 
   async createHour(hour: CreateHourDto): Promise< {isSuccess: boolean} > {
 

@@ -5,6 +5,7 @@ import { TaskService } from './task.service';
 import { TaskController } from './task.controller';
 import { EmployeeModule } from '../employee/employee.module';
 import { ProjectModule } from '../project/project.module';
+import {HourService} from "../hour/hour.service";
 
 @Module({
   imports: [

@@ -34,7 +34,7 @@ export class HourEntity extends BaseEntity implements HourItemEntity {
   @JoinTable()
   kindofwork: KindOfWorkEntity;
 
-  @Column()
+  @Column('float')
   quantity: number;
 
   @CreateDateColumn({ type: 'timestamp' })

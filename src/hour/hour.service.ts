@@ -67,7 +67,7 @@ export class HourService {
         id: hour.hours_id,
         projectId: hour.project,
         employeeId: hour.employees,
-        kindofworkId: hour.kind_of_work,
+        kindofworkId: hour.kinds_of_work,
         quantity: hour.hours_quantity,
         date: new Date(hour.hours_date).toLocaleDateString(),
       };
@@ -75,6 +75,7 @@ export class HourService {
         place: index + 1,
         hour: h,
       };
+
     });
   }
 
@@ -121,7 +122,6 @@ export class HourService {
   }
 
   async createHour(hour: CreateHourDto): Promise< {isSuccess: boolean} > {
-
     const { projectId, employeeId, quantity, kindofworkId } = hour;
     const project = await this.projectService.getOneProject(projectId);
     const employee = await this.employeeService.getOne(employeeId);
@@ -149,7 +149,7 @@ export class HourService {
           kindofwork: kindOfWork,
           timeAd: new Date(),
     });
-
+    console.log(newHour.quantity)
     await HourEntity.save(newHour);
 
     return { isSuccess: true };

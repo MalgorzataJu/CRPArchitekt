@@ -10,7 +10,7 @@ import { UserRole } from "../types";
 @Entity()
 export class UsersEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id?: string;
+  id: string;
 
   @Column({
     unique: true,
@@ -18,13 +18,13 @@ export class UsersEntity extends BaseEntity {
   email: string;
 
   @Column({
-    default: false,
+    default: true,
   })
   isActive: boolean;
 
   @Column({
     default: UserRole.Employee,
-    nullable: true
+    nullable: false
   })
   role: UserRole;
 

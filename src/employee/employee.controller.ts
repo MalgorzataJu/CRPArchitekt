@@ -19,6 +19,7 @@ import RequestWithUser from "../utils/interfaces";
 import { UsersService } from "../users/users.service";
 import { Roles } from '../auth/roles/roles.decorator';
 import {UpdateEmployeeDto} from "./dto/updateUser.dto";
+import {RegisterEmployeeRegDto} from "./dto/registerEmployeeReg.dto";
 
 @Controller('/employee')
 // @UseInterceptors(MyTimeoutInterceptor)
@@ -47,7 +48,7 @@ export class EmployeeController {
   @Get('/:id')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Roles(UserRole.Boss)
-  async getStudentProfile(
+  async getEmployeeProfile(
       @Param('id') id: string
   ) {
     const empolyeeProfile = await this.employeeService.getOne(id);
@@ -58,27 +59,17 @@ export class EmployeeController {
    return empolyeeProfile;
   }
 
-  @Get('/stat/:employeeid')
-  getAllForEmployeeById(
-  @Param('employeeid') id: string) {
-    // return this.employeeService.getAllForEmployee(id);
+  @Post('/register')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss)
+  createEmployee(
+      @Body() newUserRegister: RegisterEmployeeRegDto
+  ) {
+    return this.employeeService.createEmployee(newUserRegister);
   }
 
-  // @Post('/register')
-  // createEmployee(@Body() newUserRegister: RegisterEmployeeRegDto) {
-  //   return this.employeeService.createEmployee(newUserRegister);
-  // }
-  //
-  // @Delete('/:id')
-  // deleteEmployeeById(@Param('id') id: string) {
-  //  return this.employeeService.deleteEmployee(id);
-  // }
-  //
-  // @Post(':id/profiles')
-  // createEmployeeProfile(
-  //   @Param('id') id: string,
-  //   @Body() userProfile: CreateEmployeeProfileParams,
-  // ) {
-  //   return this.employeeService.createEmployeeProfile(id, userProfile);
-  // }
+  @Delete('/:id')
+  deleteEmployeeById(@Param('id') id: string) {
+   return this.employeeService.deleteEmployee(id);
+  }
 }

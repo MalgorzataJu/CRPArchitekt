@@ -14,10 +14,8 @@ export interface EmployeeResAllInfo {
   id?: string;
   firstName: string;
   lastName: string;
-  tel?: string;
   email: string;
   hourly?: number;
-  // hours?: string[];
 }
 
 export interface EmployeeResNAme {

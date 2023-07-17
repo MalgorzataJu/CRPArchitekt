@@ -27,9 +27,6 @@ export class EmployeeEntity extends BaseEntity implements CreateEmployeeDto{
   lastName: string;
 
   @Column()
-  tel?: string;
-
-  @Column()
   hourly: number;
 
   @OneToOne(() => UsersEntity)

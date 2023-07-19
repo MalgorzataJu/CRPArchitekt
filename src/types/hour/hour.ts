@@ -39,6 +39,11 @@ export interface ListHourResAll {
     hour: HoursItemRes;
 }
 
+export interface GetPaginatedListOfHoursResponse {
+   items: ListHourResAll[];
+   pagesCount: number;
+   totalItems: number;
+}
 export interface ListAllToAddHoursRes{
     employeeList:EmployeeResNAme[],
     projectList: ProjectNameRes[],

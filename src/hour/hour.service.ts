@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HourEntity } from '../entities/Hour.entity';
 import { Repository } from 'typeorm';
 import {
+  GetPaginatedListOfHoursResponse,
   GetTotalProjectHoursResponse,
   ListAllToAddHoursRes,
   ListHourRes,
@@ -26,11 +27,18 @@ export class HourService {
     @Inject(KindOfWorkService) private kindOfWorkService: KindOfWorkService,
   ) {}
 
-  async listAll(): Promise<ListHourResAll[]> {
-    const hours = await HourEntity.find({
+  async listAll(currentPage: number= 1): Promise<GetPaginatedListOfHoursResponse> {
+    const maxPerPage = 15;
+
+    const [hours, totalEntitiesCount] = await HourEntity.findAndCount({
+      skip: maxPerPage * (currentPage -1),
+      take: maxPerPage,
       relations: ['project', 'employee', 'kindofwork'],
     });
-    return hours.map((hour, index) => {
+
+  const totalPages = Math.ceil(totalEntitiesCount / maxPerPage);
+
+   const resHours = hours.map((hour, index) => {
       const h = {
         id: hour.id,
         projectId: hour.project.name,
@@ -40,13 +48,20 @@ export class HourService {
         date: new Date(hour.date).toLocaleDateString(),
       };
       return {
-        place: index + 1,
+        place: (index + 1) + maxPerPage * (currentPage -1),
         hour: h,
       };
     });
+    return {
+      items: resHours,
+      pagesCount: totalPages,
+      totalItems: totalEntitiesCount
+    }
   }
-  async listAllHourByEmplooyee(employeeid: string) {
-    const hours = await HourEntity
+  async listAllHourByEmplooyee(employeeid: string, currentPage: number= 1) {
+    const maxPerPage = 15;
+
+    const hours  = await HourEntity
         .createQueryBuilder('hours')
         .select( [
           'hours.id',
@@ -60,9 +75,14 @@ export class HourService {
         .innerJoin('projects', 'project', 'project.id = hours.project')
         .innerJoin('employees', 'empl', 'empl.id = hours.employee')
         .where('hours.employee = :id', {id: employeeid })
-        .getRawMany();
+        .skip(maxPerPage * (currentPage -1))
+        .take(maxPerPage)
+        .getRawMany()
 
-    return hours.map((hour, index) => {
+    const totalEntitiesCount = hours.length;
+    const totalPages = Math.ceil(totalEntitiesCount / maxPerPage);
+
+    const resHours = hours.map((hour, index) => {
       const h = {
         id: hour.hours_id,
         projectId: hour.project,
@@ -77,6 +97,11 @@ export class HourService {
       };
 
     });
+    return {
+      items: resHours,
+      pagesCount: totalPages,
+      totalItems: totalEntitiesCount
+    }
   }
 
   async getAllForProject(id: string) {

@@ -2,7 +2,7 @@ import {Body, Controller, Delete, Get, Inject, Param, Post, Put, Req, UseGuards}
 import {HourService} from './hour.service';
 import {CreateHourDto} from './dto/createHour.dto';
 import {UpdateHourDto} from './dto/updateHour.dto';
-import {ListAllToAddHoursRes, ListHourResAll, UserRole} from "../types";
+import {GetPaginatedListOfHoursResponse, ListAllToAddHoursRes, ListHourResAll, UserRole} from "../types";
 import {AuthGuard} from "@nestjs/passport";
 import {RoleGuard} from "../auth/role/role.guard";
 import {Roles} from "../auth/roles/roles.decorator";
@@ -18,17 +18,20 @@ export class HourController {
 
   ) {}
 
-  @Get('/')
+  @Get('/all/:pageNumber')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Roles(UserRole.Boss,UserRole.Employee)
-  async getHour(@Req() req: RequestWithEmployee): Promise<ListHourResAll[]> {
+  async getHour(
+      @Param('pageNumber') pageNumber:string,
+      @Req() req: RequestWithEmployee
+  ): Promise<GetPaginatedListOfHoursResponse> {
 
     if (req.user.role == UserRole.Boss)
-      return this.hourService.listAll();
+      return this.hourService.listAll(Number(pageNumber));
 
     if (req.user.role == UserRole.Employee) {
       const employeeId =await this.employeeService.getEmplyeeWitchUserId(req.user.id);
-      return this.hourService.listAllHourByEmplooyee(employeeId)
+      return this.hourService.listAllHourByEmplooyee(employeeId, Number(pageNumber))
     }
 
   }

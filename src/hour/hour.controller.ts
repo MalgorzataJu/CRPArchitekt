@@ -39,8 +39,10 @@ export class HourController {
   @Get('/add')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Roles(UserRole.Boss,UserRole.Employee)
-  listProjectEmployeeAnKindOfWorkToAddHours(): Promise<ListAllToAddHoursRes> {
-    return this.hourService.listProjectEmployeeKindeOfWorkAll();
+  listProjectEmployeeAnKindOfWorkToAddHours(
+      @Req() req: RequestWithEmployee
+  ): Promise<ListAllToAddHoursRes> {
+    return this.hourService.listProjectEmployeeKindeOfWorkAll(req.user);
   }
 
   // @Get('/statProject/:projectId')

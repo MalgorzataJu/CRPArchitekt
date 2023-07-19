@@ -18,6 +18,8 @@ import { KindOfWorkService } from '../kind-of-work/kind-of-work.service';
 import { ProjectEntity } from '../entities/Project.entity';
 import { KindOfWorkEntity } from '../entities/Kind-of-work.entity';
 import { EmployeeEntity } from "../entities/Employee.entity";
+import {RequestWithEmployee} from "../users/dto/createUser.dto";
+import {UsersEntity} from "../entities/Users.entity";
 
 @Injectable({ scope: Scope.REQUEST })
 export class HourService {
@@ -62,13 +64,8 @@ export class HourService {
     const maxPerPage = 15;
     const totalEntitiesCount = await HourEntity
         .createQueryBuilder('hours')
-        .select( [
-          'hours.id',
-          'hours.quantity',
-          'hours.date',
-        ])
         .where('hours.employee = :id', {id: employeeid })
-        .getCount()
+        .getCount();
 
     const hours  = await HourEntity
         .createQueryBuilder('hours')
@@ -86,7 +83,7 @@ export class HourService {
         .where('hours.employee = :id', {id: employeeid })
         .offset(maxPerPage * (currentPage -1))
         .limit(maxPerPage)
-        .getRawMany()
+        .getRawMany();
 
     const totalPages = Math.ceil(totalEntitiesCount / maxPerPage);
 
@@ -120,10 +117,9 @@ export class HourService {
   //zliczanie wykonanych godzin dla projektu wg rodzaju godzin
   async countHourForProject(id: string){
     const hours = await HourEntity.findBy({project:{id}})
-    console.log(hours)
   }
 
-  async listProjectEmployeeKindeOfWorkAll(): Promise<ListAllToAddHoursRes> {
+  async listProjectEmployeeKindeOfWorkAll(user: UsersEntity): Promise<ListAllToAddHoursRes> {
 
     const projectList = (await ProjectEntity.find()).map((el) => ({
       id: el.id,
@@ -135,13 +131,29 @@ export class HourService {
       hourstype: el.hourstype,
     }));
 
-    const employeeList = (await EmployeeEntity.find({
-      relations: ['user']
+    let employeeList = (await EmployeeEntity.find({
+      where:{
+        user: {
+          id: user.id,
+        },
+      },
+      relations: ['user'],
     }))
-      .map((el) => ({
-      id: el.id,
-      name: el.firstName,
-    }));
+        .map((el) => ({
+          id: el.id,
+          name: el.firstName,
+        }));
+
+    if (user.role === "Boss"){
+      employeeList = (await EmployeeEntity.find({
+        relations: ['user']
+        }))
+          .map((el) => ({
+            id: el.id,
+            name: el.firstName,
+          }));
+
+    }
 
     return {
       employeeList: employeeList,
@@ -182,7 +194,6 @@ export class HourService {
           kindofwork: kindOfWork,
           timeAd: new Date(),
     });
-    console.log(newHour.quantity)
     await HourEntity.save(newHour);
 
     return { isSuccess: true };

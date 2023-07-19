@@ -60,6 +60,15 @@ export class HourService {
   }
   async listAllHourByEmplooyee(employeeid: string, currentPage: number= 1) {
     const maxPerPage = 15;
+    const totalEntitiesCount = await HourEntity
+        .createQueryBuilder('hours')
+        .select( [
+          'hours.id',
+          'hours.quantity',
+          'hours.date',
+        ])
+        .where('hours.employee = :id', {id: employeeid })
+        .getCount()
 
     const hours  = await HourEntity
         .createQueryBuilder('hours')
@@ -75,11 +84,10 @@ export class HourService {
         .innerJoin('projects', 'project', 'project.id = hours.project')
         .innerJoin('employees', 'empl', 'empl.id = hours.employee')
         .where('hours.employee = :id', {id: employeeid })
-        .skip(maxPerPage * (currentPage -1))
-        .take(maxPerPage)
+        .offset(maxPerPage * (currentPage -1))
+        .limit(maxPerPage)
         .getRawMany()
 
-    const totalEntitiesCount = hours.length;
     const totalPages = Math.ceil(totalEntitiesCount / maxPerPage);
 
     const resHours = hours.map((hour, index) => {
@@ -92,7 +100,7 @@ export class HourService {
         date: new Date(hour.hours_date).toLocaleDateString(),
       };
       return {
-        place: index + 1,
+        place: (index + 1) + maxPerPage * (currentPage -1),
         hour: h,
       };
 

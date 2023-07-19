@@ -109,24 +109,6 @@ export class EmployeeService {
 
     return this.filter(newUser);
   }
-  //
-  // async createEmployeeEntity(
-  //   id: string,
-  //   createEmployeeDetails: RegisterEmployeeRegDto,
-  // ) {
-  //   const user = await EmployeeEntity.findOneBy({ id });
-  //
-  //   if (!user)
-  //     throw new HttpException(
-  //       'User not found. Cannot create Profile',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   const newEmployee = await EmployeeEntity.create(createEmployeeDetails);
-  //   const savedEmployee = await EmployeeEntity.save(newEmployee);
-  //   user.user = savedProfile;
-  //
-  //   return EmployeeEntity.save(user);
-  // }
 
   async updateEmployee(id: string, updateUserDetail: UpdateEmployeeDto) {
 

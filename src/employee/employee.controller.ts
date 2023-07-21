@@ -54,8 +54,10 @@ export class EmployeeController {
     const empolyeeProfile = await this.employeeService.getOne(id);
 
    if (!empolyeeProfile) {
-     throw new BadRequestException(`Guard nie wpuści, ale obsługa błędu jest`);
+     throw new BadRequestException(`NIe ma pracownika w bazie`);
    }
+
+
    return empolyeeProfile;
   }
 

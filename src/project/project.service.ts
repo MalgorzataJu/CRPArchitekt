@@ -38,7 +38,13 @@ export class ProjectService {
         description: p.description,
         startDate: new Date(p.startDate).toLocaleDateString(),
         endDate: new Date(p.endDate).toLocaleDateString(),
-        quantityHours: Number(p.quantityHours),
+        quantityHours: Number(p.stocktaking + p.control + p.conception +p.setOf +p.excess +p.executive),
+        stocktaking: p.stocktaking,
+        conception: p.conception,
+        setOf: p.setOf,
+        excess: p.excess,
+        executive: p.executive,
+        control : p.control,
       };
 
       const sumHoursListForProject = hours.map(h => {if (h.projectId == p.id) {

@@ -12,7 +12,7 @@ import {
 import { HourEntity } from './Hour.entity';
 import { TaskEntity } from './Task.entity';
 import { CreateEmployeeDto } from "../employee/dto/createEmployee.dto";
-import { UsersEntity } from "../entities/users.entity";
+import {UsersEntity} from "./Users.entity";
 
 
 @Entity({ name: 'employees' })

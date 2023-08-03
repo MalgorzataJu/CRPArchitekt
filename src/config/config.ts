@@ -7,7 +7,7 @@ const APP_ENV = process.env['APP_ENV'] || 'development';
 
 export const config = {
   APP_ENV,
-  APP_IP: process.env['APP_IP'],
+  APP_IP : process.env['APP_IP'],
   APP_PORT: process.env['APP_PORT'],
 
   TYPEORM_HOST: process.env['TYPEORM_HOST'],

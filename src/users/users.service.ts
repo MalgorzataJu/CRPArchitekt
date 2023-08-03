@@ -1,14 +1,10 @@
 import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Command, Console } from 'nestjs-console';
 import { Repository } from 'typeorm';
-
-import {  UsersEntity } from '../entities/users.entity';
+import {UsersEntity} from "../entities/Users.entity";
 
 @Injectable()
 @Console({

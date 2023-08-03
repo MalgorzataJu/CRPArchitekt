@@ -5,4 +5,10 @@ export class CreateProjectDto {
   startDate: string;
   endDate: string;
   quantityHours: number;
+  stocktaking: number;
+  conception: number;
+  setOf: number;
+  excess: number;
+  executive: number;
+  control: number;
 }

@@ -1,13 +1,13 @@
 import {HttpException, HttpStatus, Injectable,} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {EmployeeEntity} from '../entities/Employee.entity';
-import {UsersEntity} from '../entities/users.entity';
 import {Repository} from 'typeorm';
 import {CreateEmployeeRes, EmployeeResAllInfo, ListEmployeeResAll} from "../types/employee";
 import {RegisterEmployeeRegDto} from "./dto/registerEmployeeReg.dto";
 import {hashMethod, hashPwd} from "../utils/hash-password";
 import {UpdateEmployeeDto} from "./dto/updateUser.dto";
 import {UserRole} from "../types";
+import {UsersEntity} from "../entities/Users.entity";
 
 
 @Injectable()

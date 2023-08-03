@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
 } from 'typeorm';
+
 import { UserRole } from "../types";
 
 @Entity()

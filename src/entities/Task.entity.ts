@@ -5,9 +5,9 @@ import {
     Entity, JoinTable, ManyToMany, ManyToOne, OneToMany,
     PrimaryGeneratedColumn, UpdateDateColumn
 } from "typeorm";
-import {EmployeeEntity} from "./Employee.entity";
-import {ProjectEntity} from "./Project.entity";
-import {TaskItemEntity} from "../types";
+import { EmployeeEntity } from "./Employee.entity";
+import { ProjectEntity } from "./Project.entity";
+import { TaskItemEntity } from "../types/task";
 
 @Entity({name: 'tasks'})
 export class TaskEntity extends BaseEntity implements TaskItemEntity{

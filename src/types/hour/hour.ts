@@ -1,6 +1,6 @@
-import { EmployeeRes, EmployeeResNAme } from "../employee";
-import { ProjectNameRes, ProjectSimpleRes } from "../projekt";
-import { KindOfWorkItemEntity } from "../kindOfWork";
+import {  EmployeeResNAme } from "../employee";
+import { ProjectNameRes } from "../projekt";
+import { KindOfWorkItemEntityRes} from "../kindOfWork";
 
 export interface CreateHour {
     projectId: string;
@@ -39,9 +39,14 @@ export interface ListHourResAll {
     hour: HoursItemRes;
 }
 
+export interface GetPaginatedListOfHoursResponse {
+   items: ListHourResAll[];
+   pagesCount: number;
+   totalItems: number;
+}
 export interface ListAllToAddHoursRes{
     employeeList:EmployeeResNAme[],
     projectList: ProjectNameRes[],
-    kindofworkList:KindOfWorkItemEntity[],
+    kindofworkList:KindOfWorkItemEntityRes[],
 }
 

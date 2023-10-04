@@ -15,6 +15,12 @@ export interface ProjectSimpleRes {
   startDate: string;
   endDate: string;
   quantityHours: number;
+  stocktaking: number;
+  conception: number;
+  setOf: number;
+  excess: number;
+  executive : number;
+  control : number;
 }
 export interface ProjectNameRes {
   id: string;
@@ -27,12 +33,22 @@ export interface CreateProject {
   contact: string;
   startDate: string;
   endDate: string;
-  quantityHours: number;
+  stocktaking: number;
+  conception: number;
+  setOf: number;
+  excess: number;
+  executive : number;
+  control : number;
 }
-
+export interface ListKindOfHourForProject {
+  kindofwork: string;
+  sumKindOfWork: number;
+}
 export interface ListProjectRes {
   place: number;
   project: ProjectSimpleRes;
+  hours: ListKindOfHourForProject[];
+  sumOfDone: number;
 }
 
 export type ListProjectSimpleResAll = ListProjectRes[];

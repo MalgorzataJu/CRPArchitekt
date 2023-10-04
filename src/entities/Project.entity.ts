@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { HourEntity } from './Hour.entity';
 import { TaskEntity } from './Task.entity';
-import { ProjectItemEntity } from '../types';
+import { ProjectItemEntity } from "../types/projekt";
 import { IsDate } from "class-validator";
 
 @Entity({ name: 'projects' })
@@ -37,6 +37,24 @@ export class ProjectEntity extends BaseEntity implements ProjectItemEntity {
 
   @Column({ default: 30 })
   quantityHours: number;
+
+  @Column({ default: 30 })
+  stocktaking: number;
+
+  @Column({ default: 30 })
+  conception: number;
+
+  @Column({ default: 30 })
+  setOf: number;
+
+  @Column({ default: 30 })
+  excess: number;
+
+  @Column({ default: 30 })
+  executive : number;
+
+  @Column({ default: 30 })
+  control : number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

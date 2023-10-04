@@ -12,10 +12,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { KindOfWorkEntity } from './Kind-of-work.entity';
 import { ProjectEntity } from './Project.entity';
-import { HourItemEntity } from '../types';
 import { EmployeeEntity } from "./Employee.entity";
+import { HourItemEntity } from "../types/hour";
 
 @Entity({ name: 'hours' })
 export class HourEntity extends BaseEntity implements HourItemEntity {
@@ -34,15 +35,13 @@ export class HourEntity extends BaseEntity implements HourItemEntity {
   @JoinTable()
   kindofwork: KindOfWorkEntity;
 
-  @Column()
+  @Column('float')
   quantity: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   date: Date;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  timeAd: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
 }

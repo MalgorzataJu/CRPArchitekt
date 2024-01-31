@@ -32,28 +32,46 @@ export class HourService {
   async listAll(currentPage: number= 1): Promise<GetPaginatedListOfHoursResponse> {
     const maxPerPage = 15;
 
-    const [hours, totalEntitiesCount] = await HourEntity.findAndCount({
-      skip: maxPerPage * (currentPage -1),
-      take: maxPerPage,
-      relations: ['project', 'employee', 'kindofwork'],
-    });
+    const totalEntitiesCount = await HourEntity
+        .createQueryBuilder('hours')
+        .getCount();
+
+    const hours = await HourEntity
+        .createQueryBuilder('hours')
+        .select( [
+          'hours.id',
+          'hours.quantity',
+          'hours.date',
+        ])
+        .addSelect('kow.hourstype', 'kinds_of_work')
+        .addSelect('project.name', 'project')
+        .addSelect('empl.firstName', 'employees')
+        .innerJoin('kinds_of_work', 'kow', 'kow.id = hours.kindofwork')
+        .innerJoin('projects', 'project', 'project.id = hours.project')
+        .innerJoin('employees', 'empl', 'empl.id = hours.employee')
+        .offset(maxPerPage * (currentPage -1))
+        .limit(maxPerPage)
+        .orderBy('hours.date')
+        .getRawMany();
 
   const totalPages = Math.ceil(totalEntitiesCount / maxPerPage);
 
    const resHours = hours.map((hour, index) => {
       const h = {
         id: hour.id,
-        projectId: hour.project.name,
-        employeeId: hour.employee.firstName,
-        kindofworkId: hour.kindofwork.hourstype,
-        quantity: hour.quantity,
-        date: new Date(hour.date).toLocaleDateString(),
+        projectId: hour.project,
+        employeeId: hour.employees,
+        kindofworkId: hour.kinds_of_work,
+        quantity: hour.hours_quantity,
+        date: new Date(hour.hours_date).toLocaleDateString(),
       };
+
       return {
         place: (index + 1) + maxPerPage * (currentPage -1),
         hour: h,
       };
     });
+
     return {
       items: resHours,
       pagesCount: totalPages,
@@ -83,6 +101,7 @@ export class HourService {
         .where('hours.employee = :id', {id: employeeid })
         .offset(maxPerPage * (currentPage -1))
         .limit(maxPerPage)
+        .orderBy('hours.date')
         .getRawMany();
 
     const totalPages = Math.ceil(totalEntitiesCount / maxPerPage);
@@ -102,6 +121,7 @@ export class HourService {
       };
 
     });
+
     return {
       items: resHours,
       pagesCount: totalPages,

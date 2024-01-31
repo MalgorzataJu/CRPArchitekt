@@ -72,11 +72,15 @@ export class HourController {
   }
 
   @Delete('/:id')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss,UserRole.Employee)
   deleteHourById(@Param('id') id: string) {
     this.hourService.deleteHour(id);
   }
 
   @Delete('/:employeeId/:hourId')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss,UserRole.Employee)
   deleteHourEmployeeById(
     @Param('employeeId') employeeId: string,
     @Param('hourId') id: string,

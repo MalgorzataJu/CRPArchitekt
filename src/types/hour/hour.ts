@@ -34,6 +34,12 @@ export interface ListHourRes {
     hour: HourItemEntity;
 }
 
+export interface  ListHourCountRes {
+    id: string
+    date: string;
+    quantity: number;
+}
+
 export interface ListHourResAll {
     place: number;
     hour: HoursItemRes;

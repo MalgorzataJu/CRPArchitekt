@@ -29,11 +29,17 @@ export class HourService {
     @Inject(KindOfWorkService) private kindOfWorkService: KindOfWorkService,
   ) {}
 
-  async listAll(currentPage: number= 1): Promise<GetPaginatedListOfHoursResponse> {
+  async getHoursForEmployee(){
+
+  }
+
+  async listAll(currentPage: number= 1, year: string, month: string): Promise<GetPaginatedListOfHoursResponse> {
     const maxPerPage = 15;
 
     const totalEntitiesCount = await HourEntity
         .createQueryBuilder('hours')
+        .andWhere(`MONTH(hours.date) = :month`, { month: month})
+        .andWhere(`YEAR(hours.date) = :year`, { year: year })
         .getCount();
 
     const hours = await HourEntity
@@ -49,6 +55,8 @@ export class HourService {
         .innerJoin('kinds_of_work', 'kow', 'kow.id = hours.kindofwork')
         .innerJoin('projects', 'project', 'project.id = hours.project')
         .innerJoin('employees', 'empl', 'empl.id = hours.employee')
+        .andWhere(`MONTH(hours.date) = :month`, { month: month})
+        .andWhere(`YEAR(hours.date) = :year`, { year: year })
         .offset(maxPerPage * (currentPage -1))
         .limit(maxPerPage)
         .orderBy('hours.date')
@@ -78,11 +86,13 @@ export class HourService {
       totalItems: totalEntitiesCount
     }
   }
-  async listAllHourByEmplooyee(employeeid: string, currentPage: number= 1) {
+  async listAllHourByEmplooyee(employeeid: string, currentPage: number= 1, year: string, month: string) {
     const maxPerPage = 15;
     const totalEntitiesCount = await HourEntity
         .createQueryBuilder('hours')
         .where('hours.employee = :id', {id: employeeid })
+        .andWhere(`MONTH(hours.date) = :month`, { month: month})
+        .andWhere(`YEAR(hours.date) = :year`, { year: year })
         .getCount();
 
     const hours  = await HourEntity
@@ -99,6 +109,8 @@ export class HourService {
         .innerJoin('projects', 'project', 'project.id = hours.project')
         .innerJoin('employees', 'empl', 'empl.id = hours.employee')
         .where('hours.employee = :id', {id: employeeid })
+        .andWhere(`MONTH(hours.date) = :month`, { month: month})
+        .andWhere(`YEAR(hours.date) = :year`, { year: year })
         .offset(maxPerPage * (currentPage -1))
         .limit(maxPerPage)
         .orderBy('hours.date')
@@ -128,6 +140,65 @@ export class HourService {
       totalItems: totalEntitiesCount
     }
   }
+
+  //funkcja zwracająca ilośc godzin w danym dniu miesiąca dla danego praconika
+  async countHourByEmplooyee(employeeid: string, year: string, month: string) {
+
+        const hours = await HourEntity
+            .createQueryBuilder('hours')
+            .select([
+                'hours.id',
+                'SUM(hours.quantity) AS quantity',
+                'hours.date',
+            ])
+            .where('hours.employee = :id', {id: employeeid})
+            .andWhere(`MONTH(hours.date) = :month`, { month: month})
+            .andWhere(`YEAR(hours.date) = :year`, { year: year })
+            .orderBy('hours.date')
+            .groupBy('hours.date')
+            .getRawMany();
+
+    const resHours = hours.map(hour => {
+
+      const h = {
+        id: hour.hours_id,
+        quantity: hour.quantity,
+        date: new Date(hour.hours_date).toLocaleDateString(),
+      };
+      return h
+    });
+
+    return  resHours
+  }
+
+    async countHourByEmplooyeeForBoss(year:string, month: string) {
+
+        const hours = await HourEntity
+            .createQueryBuilder('hours')
+            .select( [
+                'hours.id',
+                'hours.date',
+                'SUM(hours.quantity) AS quantity',
+            ])
+            .addSelect('empl.firstName', 'employees')
+            .innerJoin('employees', 'empl', 'empl.id = hours.employee')
+            .andWhere(`MONTH(hours.date) = :month`, { month: month})
+            .andWhere(`YEAR(hours.date) = :year`, { year: year })
+            .orderBy('hours.date')
+            .addGroupBy('hours.date')
+            .getRawMany();
+
+        const resHours = hours.map(hour => {
+
+            const h = {
+                id: hour.hours_id,
+                quantity: hour.quantity,
+                date: new Date(hour.hours_date).toLocaleDateString(),
+            };
+            return h
+        });
+        return  resHours
+    }
 
   async getAllForProject(id: string) {
     const project = await this.projectService.getOneProject( id );

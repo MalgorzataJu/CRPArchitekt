@@ -55,13 +55,12 @@ export class HourController {
 
     if (req.user.role == UserRole.Boss)
     {
-      // return this.hourService.countHourByEmplooyeeForBoss(year, month);
+      return this.hourService.countHourByEmplooyeeForBoss(year, month);
     }else
       if (req.user.role == UserRole.Employee) {
       const employeeId =await this.employeeService.getEmplyeeWitchUserId(req.user.id);
       return this.hourService.countHourByEmplooyee(employeeId,year, month);
     }
-
   }
 
   @Get('/add')
@@ -72,14 +71,6 @@ export class HourController {
   ): Promise<ListAllToAddHoursRes> {
     return this.hourService.listProjectEmployeeKindeOfWorkAll(req.user);
   }
-
-  // @Get('/statProject/:projectId')
-  // @UseGuards(AuthGuard('jwt'), RoleGuard)
-  // @Roles(UserRole.Boss,UserRole.Employee)
-  // getProjectHoursStat( @Param('projectId') id: string){
-  //   // console.log(id);
-  //   return this.hourService.getAllForProject(id);
-  // }
 
   @Post('/')
   @UseGuards(AuthGuard('jwt'), RoleGuard)

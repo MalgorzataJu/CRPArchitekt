@@ -150,8 +150,8 @@ export class HourService {
           .where('hours.employee = :id', {id: employeeid})
           .andWhere(`MONTH(hours.date) = :month`, { month: month})
           .andWhere(`YEAR(hours.date) = :year`, { year: year })
-          .groupBy('kow.hourstype') // Grupowanie według daty i rodzaju pracy
-          .orderBy('total_quantity')
+          .groupBy('kow.hourstype') // Grupowanie według rodzaju pracy
+          .orderBy('total_quantity', "DESC")
           .getRawMany();
 
       const hoursForProject = await HourEntity
@@ -165,7 +165,7 @@ export class HourService {
           .andWhere(`MONTH(hours.date) = :month`, { month: month})
           .andWhere(`YEAR(hours.date) = :year`, { year: year })
           .groupBy('project.name') // Grupowanie według daty i rodzaju pracy
-          .orderBy('total_quantity')
+          .orderBy('total_quantity', "DESC")
           .getRawMany();
 
         const hours = await HourEntity
@@ -190,39 +190,110 @@ export class HourService {
       };
       return h
     });
-    return  {
+
+      const totalMonthlyHours = await HourEntity
+          .createQueryBuilder('hours')
+          .select('SUM(hours.quantity)', 'total_quantity')
+          .where('hours.employee = :id', { id: employeeid })
+          .andWhere(`MONTH(hours.date) = :month`, { month })
+          .andWhere(`YEAR(hours.date) = :year`, { year })
+          .getRawOne();
+
+      return  {
         hoursCountPerDay: resHours,
         hoursForProject,
         hoursForKindeOfWork,
+        totalMonthlyHours: totalMonthlyHours.total_quantity,
     }
   }
 
+  async countMonthlyHoursForBosPerEmployee(year:string, month: string) {
+      const allWorkedEmployee = await HourEntity
+          .createQueryBuilder('hours')
+          .select('employee.id', 'employeeId') // Wybieramy identyfikator pracownika
+          .addSelect('empl.firstName', 'employees')
+          .innerJoin('employees', 'empl', 'empl.id = hours.employee')
+          .innerJoin('hours.employee', 'employee') // Dołączamy encję EmployeeEntity
+          .where(`MONTH(hours.date) = :month AND YEAR(hours.date) = :year`, { month, year }) // Filtrujemy rekordy po miesiącu i roku
+          .groupBy('employee.id') // Grupujemy wyniki, aby uniknąć duplikatów
+          .getRawMany();
+
+      const modifiedEmployees = await Promise.all(allWorkedEmployee.map(async employee => {
+
+          const {totalMonthlyHours} =
+              await this.countHourByEmplooyee(employee.employeeId, year, month)
+                  return {
+                      name: employee.employees,
+                      total_quantity: totalMonthlyHours,
+                  }
+            }))
+      return modifiedEmployees;
+  }
   async countHourByEmplooyeeForBoss(year:string, month: string) {
-        const hours = await HourEntity
-            .createQueryBuilder('hours')
-            .select( [
-                'hours.id',
-                'hours.date',
-                'SUM(hours.quantity) AS quantity',
-            ])
-            .addSelect('empl.firstName', 'employees')
-            .innerJoin('employees', 'empl', 'empl.id = hours.employee')
-            .andWhere(`MONTH(hours.date) = :month`, { month: month})
-            .andWhere(`YEAR(hours.date) = :year`, { year: year })
-            .orderBy('hours.date')
-            .addGroupBy('hours.date')
-            .getRawMany();
+      const hoursForKindeOfWork = await HourEntity
+          .createQueryBuilder('hours')
+          .select([
+              'kow.hourstype AS name',
+              'SUM(hours.quantity) AS total_quantity', // Całkowita liczba godzin przepracowanych dla każdego typu pracy
+          ])
+          .innerJoin('kinds_of_work', 'kow', 'kow.id = hours.kindofwork')
+          .andWhere(`MONTH(hours.date) = :month`, { month: month})
+          .andWhere(`YEAR(hours.date) = :year`, { year: year })
+          .groupBy('kow.hourstype') // Grupowanie według daty i rodzaju pracy
+          .orderBy('total_quantity', "DESC")
+          .getRawMany();
 
-        const resHours = hours.map(hour => {
+      const hoursForProject = await HourEntity
+          .createQueryBuilder('hours')
+          .select([
+              'project.name AS name',
+              'SUM(hours.quantity) AS total_quantity', // Całkowita liczba godzin przepracowanych dla każdego typu pracy
+          ])
+          .innerJoin('projects', 'project', 'project.id = hours.project')
+          .andWhere(`MONTH(hours.date) = :month`, { month: month})
+          .andWhere(`YEAR(hours.date) = :year`, { year: year })
+          .groupBy('project.name') // Grupowanie według daty i rodzaju pracy
+          .orderBy('total_quantity', "DESC")
+          .getRawMany();
 
-            const h = {
-                id: hour.hours_id,
-                quantity: hour.quantity,
-                date: new Date(hour.hours_date).toLocaleDateString(),
-            };
-            return h
-        });
-        return  resHours
+      const hours = await HourEntity
+          .createQueryBuilder('hours')
+          .select([
+              'hours.id',
+              'SUM(hours.quantity) AS quantity',
+              'hours.date',
+          ])
+          .andWhere(`MONTH(hours.date) = :month`, { month: month})
+          .andWhere(`YEAR(hours.date) = :year`, { year: year })
+          .orderBy('hours.date', "DESC")
+          .groupBy('hours.date')
+          .getRawMany();
+
+      const resHours = hours.map(hour => {
+          const h = {
+              id: hour.hours_id,
+              quantity: hour.quantity,
+              date: new Date(hour.hours_date).toLocaleDateString(),
+          };
+          return h
+      });
+
+      const totalMonthlyHours = await HourEntity
+          .createQueryBuilder('hours')
+          .select('SUM(hours.quantity)', 'total_quantity')
+          .andWhere(`MONTH(hours.date) = :month`, { month })
+          .andWhere(`YEAR(hours.date) = :year`, { year })
+          .getRawOne();
+
+     const totalMonthlyHoursForEmployee = await this.countMonthlyHoursForBosPerEmployee(year, month);
+
+      return  {
+          hoursCountPerDay: resHours,
+          hoursForProject,
+          hoursForKindeOfWork,
+          totalMonthlyHours: totalMonthlyHours.total_quantity,
+          totalMonthlyHoursForEmployee,
+      }
     }
 
   async listProjectEmployeeKindeOfWorkAll(user: UsersEntity): Promise<ListAllToAddHoursRes> {

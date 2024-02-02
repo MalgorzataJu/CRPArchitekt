@@ -67,4 +67,6 @@ export interface StatisticHoursForEmployee {
     hoursCountPerDay: ListHourCountRes[],
     hoursForProject : SimpleRest[],
     hoursForKindeOfWork: SimpleRest[],
+    totalMonthlyHours: number,
+    totalMonthlyHoursForEmployee?:SimpleRest[],
 }

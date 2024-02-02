@@ -55,4 +55,16 @@ export interface ListAllToAddHoursRes{
     projectList: ProjectNameRes[],
     kindofworkList:KindOfWorkItemEntityRes[],
 }
-
+export interface SimpleRest{
+    name:string,
+    total_quantity: string
+}
+// export interface SimpleRestHoursKOW{
+//     kinds_of_work:string,
+//     total_quantity: string
+// }
+export interface StatisticHoursForEmployee {
+    hoursCountPerDay: ListHourCountRes[],
+    hoursForProject : SimpleRest[],
+    hoursForKindeOfWork: SimpleRest[],
+}

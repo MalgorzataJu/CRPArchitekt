@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from '@nestjs/common';
+import {Inject, Injectable, Logger, Scope} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HourEntity } from '../entities/Hour.entity';
 import { Repository } from 'typeorm';
@@ -29,12 +29,8 @@ export class HourService {
     @Inject(KindOfWorkService) private kindOfWorkService: KindOfWorkService,
   ) {}
 
-  async getHoursForEmployee(){
-
-  }
-
   async listAll(currentPage: number= 1, year: string, month: string): Promise<GetPaginatedListOfHoursResponse> {
-    const maxPerPage = 15;
+    const maxPerPage = 14;
 
     const totalEntitiesCount = await HourEntity
         .createQueryBuilder('hours')
@@ -87,7 +83,7 @@ export class HourService {
     }
   }
   async listAllHourByEmplooyee(employeeid: string, currentPage: number= 1, year: string, month: string) {
-    const maxPerPage = 15;
+    const maxPerPage = 14;
     const totalEntitiesCount = await HourEntity
         .createQueryBuilder('hours')
         .where('hours.employee = :id', {id: employeeid })
@@ -144,6 +140,34 @@ export class HourService {
   //funkcja zwracająca ilośc godzin w danym dniu miesiąca dla danego praconika
   async countHourByEmplooyee(employeeid: string, year: string, month: string) {
 
+      const hoursForKindeOfWork = await HourEntity
+          .createQueryBuilder('hours')
+          .select([
+              'kow.hourstype AS name',
+              'SUM(hours.quantity) AS total_quantity', // Całkowita liczba godzin przepracowanych dla każdego typu pracy
+          ])
+          .innerJoin('kinds_of_work', 'kow', 'kow.id = hours.kindofwork')
+          .where('hours.employee = :id', {id: employeeid})
+          .andWhere(`MONTH(hours.date) = :month`, { month: month})
+          .andWhere(`YEAR(hours.date) = :year`, { year: year })
+          .groupBy('kow.hourstype') // Grupowanie według daty i rodzaju pracy
+          .orderBy('total_quantity')
+          .getRawMany();
+
+      const hoursForProject = await HourEntity
+          .createQueryBuilder('hours')
+          .select([
+              'project.name AS name',
+              'SUM(hours.quantity) AS total_quantity', // Całkowita liczba godzin przepracowanych dla każdego typu pracy
+          ])
+          .innerJoin('projects', 'project', 'project.id = hours.project')
+          .where('hours.employee = :id', {id: employeeid})
+          .andWhere(`MONTH(hours.date) = :month`, { month: month})
+          .andWhere(`YEAR(hours.date) = :year`, { year: year })
+          .groupBy('project.name') // Grupowanie według daty i rodzaju pracy
+          .orderBy('total_quantity')
+          .getRawMany();
+
         const hours = await HourEntity
             .createQueryBuilder('hours')
             .select([
@@ -159,7 +183,6 @@ export class HourService {
             .getRawMany();
 
     const resHours = hours.map(hour => {
-
       const h = {
         id: hour.hours_id,
         quantity: hour.quantity,
@@ -167,12 +190,14 @@ export class HourService {
       };
       return h
     });
-
-    return  resHours
+    return  {
+        hoursCountPerDay: resHours,
+        hoursForProject,
+        hoursForKindeOfWork,
+    }
   }
 
-    async countHourByEmplooyeeForBoss(year:string, month: string) {
-
+  async countHourByEmplooyeeForBoss(year:string, month: string) {
         const hours = await HourEntity
             .createQueryBuilder('hours')
             .select( [
@@ -199,16 +224,6 @@ export class HourService {
         });
         return  resHours
     }
-
-  async getAllForProject(id: string) {
-    const project = await this.projectService.getOneProject( id );
-    console.log(project);
-  }
-
-  //zliczanie wykonanych godzin dla projektu wg rodzaju godzin
-  async countHourForProject(id: string){
-    const hours = await HourEntity.findBy({project:{id}})
-  }
 
   async listProjectEmployeeKindeOfWorkAll(user: UsersEntity): Promise<ListAllToAddHoursRes> {
 
@@ -251,10 +266,6 @@ export class HourService {
       projectList: projectList,
       kindofworkList: kindofworkList,
     };
-  }
-
-  async getAllStatByProject(projectId: string): Promise<GetTotalProjectHoursResponse> {
-    return 123;
   }
 
   async createHour(hour: CreateHourDto): Promise< {isSuccess: boolean} > {

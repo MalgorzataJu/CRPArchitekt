@@ -7,7 +7,7 @@ import {
   ListAllToAddHoursRes,
   ListHourCountRes,
   ListHourRes,
-  ListHourResAll,
+  ListHourResAll, StatisticHoursForEmployee,
   UserRole
 } from "../types";
 import {AuthGuard} from "@nestjs/passport";
@@ -51,11 +51,11 @@ export class HourController {
       @Query('y') year: string,
       @Query('m') month: string,
       @Req() req: RequestWithEmployee
-  ): Promise<ListHourCountRes[]> {
+  ): Promise<StatisticHoursForEmployee> {
 
     if (req.user.role == UserRole.Boss)
     {
-      return this.hourService.countHourByEmplooyeeForBoss(year, month);
+      // return this.hourService.countHourByEmplooyeeForBoss(year, month);
     }else
       if (req.user.role == UserRole.Employee) {
       const employeeId =await this.employeeService.getEmplyeeWitchUserId(req.user.id);

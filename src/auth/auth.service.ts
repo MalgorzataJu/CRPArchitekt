@@ -49,27 +49,32 @@ export class AuthService {
           email: req.email,
           pwd: hashPwd(req.pwd),
       });
+
       if (!user) {
-        return res.json({
+        return res.status(404).json({
           error: 'Nie znaleziono użytkownika o podanym e-mailu!',
+          isAuthenticated: false
         });
       }
       if (!user.isActive) {
-        return res.json({ error: 'Your account is deactivated!' });
+        return res.status(403).json({
+          error: 'Your account is deactivated!',
+          isAuthenticated: false
+        });
       }
 
       const token = this.createToken(await this.generateToken(user));
-
       return res
         .cookie('jwt', token.accessToken, {
           secure: false, //jeśli localHost to false jesli bedzie na stronie 'https' to wtedy true
+          // secure: process.env.NODE_ENV_SECURE === 'production',
           domain: 'localhost', // zmienić na właściwy adres jeśli wypuszczamy na prod.
           // domain: '4pages.pl', // zmienić na właściwy adres jeśli wypuszczamy na prod.
           httpOnly: true,
         })
-         .json({ isAuthenticated: true, id: user.id, role: user.role, email: user.email });
+         .json({ isAuthenticated: true, id: user.id, role: user.role, email: user.email, date: new Date().getTime() });
     } catch (e) {
-      return res.json({ error: e.message });
+        return res.status(500).json({ error: 'Wystąpił problem z logowaniem, spróbuj ponownie.', isAuthenticated: false });
     }
   }
 

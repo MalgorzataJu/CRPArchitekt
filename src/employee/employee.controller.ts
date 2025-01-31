@@ -22,7 +22,7 @@ import {UpdateEmployeeDto} from "./dto/updateUser.dto";
 import {RegisterEmployeeRegDto} from "./dto/registerEmployeeReg.dto";
 
 @Controller('/employee')
-// @UseInterceptors(MyTimeoutInterceptor)
+@UseInterceptors(MyTimeoutInterceptor)
 export class EmployeeController {
   constructor(
     @Inject(EmployeeService) private employeeService: EmployeeService,
@@ -57,7 +57,6 @@ export class EmployeeController {
      throw new BadRequestException(`NIe ma pracownika w bazie`);
    }
 
-
    return empolyeeProfile;
   }
 
@@ -71,6 +70,8 @@ export class EmployeeController {
   }
 
   @Delete('/:id')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss)
   deleteEmployeeById(@Param('id') id: string) {
    return this.employeeService.deleteEmployee(id);
   }

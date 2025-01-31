@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Response } from 'express';
-
 import { v4 as uuid } from 'uuid';
 import { sign } from 'jsonwebtoken';
 import { config } from 'src/config/config';
@@ -8,6 +7,7 @@ import { JwtPayload } from './jwt.strategy';
 import { hashPwd } from "../utils/hash-password";
 import {AuthLoginDto} from "./dto/auth-login.dto";
 import {UsersEntity} from "../entities/Users.entity";
+import process from "process";
 
 @Injectable()
 export class AuthService {
@@ -62,12 +62,13 @@ export class AuthService {
           isAuthenticated: false
         });
       }
-
       const token = this.createToken(await this.generateToken(user));
+      console.log(token.expiresIn)
       return res
         .cookie('jwt', token.accessToken, {
           secure: false, //jeśli localHost to false jesli bedzie na stronie 'https' to wtedy true
-          // secure: process.env.NODE_ENV_SECURE === 'production',
+          // secure: config.NODE_ENV_SECURE=="true",
+          // domain: process.env['APP_DOMAIN'],
           domain: 'localhost', // zmienić na właściwy adres jeśli wypuszczamy na prod.
           // domain: '4pages.pl', // zmienić na właściwy adres jeśli wypuszczamy na prod.
           httpOnly: true,
@@ -84,7 +85,8 @@ export class AuthService {
       await user.save();
       res.clearCookie('jwt', {
         secure: false,
-        domain: 'localhost',
+        domain: process.env['APP_DOMAIN'],
+        //domain: 'localhost',
         // domain: '4pages.pl',
         httpOnly: true,
       });

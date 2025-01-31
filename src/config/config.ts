@@ -16,6 +16,7 @@ export const config = {
   TYPEORM_DATABASE: process.env['TYPEORM_DATABASE'],
   TYPEORM_PORT: process.env['TYPEORM_PORT'],
   TYPEORM_SYNC: process.env['TYPEORM_SYNC'] === 'true',
+  NODE_ENV_SECURE: process.env['NODE_ENV_SECURE'],
 
   // USER_NAME_SMTP: process.env['USER_NAME_SMTP'],
   // USER_PASSWORD_SMTP: process.env['USER_PASSWORD_SMTP'],

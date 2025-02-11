@@ -388,4 +388,12 @@ export class HourService {
 
     return await HourEntity.delete({ id });
   }
+
+  async listYears(): Promise<number[]> {
+      const years = await HourEntity
+          .createQueryBuilder('hours')
+          .select('DISTINCT YEAR(hours.date)', 'year')
+          .getRawMany();
+      return years.map(y => y.year);
+  }
 }

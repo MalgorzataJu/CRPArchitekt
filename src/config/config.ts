@@ -9,6 +9,7 @@ export const config = {
   APP_ENV,
   APP_IP : process.env['APP_IP'],
   APP_PORT: process.env['APP_PORT'],
+  DOMAIN: process.env['DOMAIN'],
 
   TYPEORM_HOST: process.env['TYPEORM_HOST'],
   TYPEORM_USERNAME: process.env['TYPEORM_USERNAME'],

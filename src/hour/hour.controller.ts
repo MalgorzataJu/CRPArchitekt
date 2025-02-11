@@ -44,6 +44,13 @@ export class HourController {
 
   }
 
+  @Get('/getyears')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss,UserRole.Employee)
+  async getYears(){
+    return this.hourService.listYears();
+  }
+
   @Get('/sum')
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   @Roles(UserRole.Boss,UserRole.Employee)

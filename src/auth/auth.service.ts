@@ -45,11 +45,12 @@ export class AuthService {
 
   async login(req: AuthLoginDto, res: Response): Promise<any> {
     try {
+      console.log(req);
       const user = await UsersEntity.findOneBy({
           email: req.email,
           pwd: hashPwd(req.pwd),
       });
-
+      console.log(user);
       if (!user) {
         return res.status(404).json({
           error: 'Nie znaleziono użytkownika o podanym e-mailu!',
@@ -63,14 +64,15 @@ export class AuthService {
         });
       }
       const token = this.createToken(await this.generateToken(user));
-      console.log(token.expiresIn)
+      console.log(token.expiresIn);
+      console.log( config.NODE_ENV_SECURE);
       return res
         .cookie('jwt', token.accessToken, {
-          secure: false, //jeśli localHost to false jesli bedzie na stronie 'https' to wtedy true
-          // secure: config.NODE_ENV_SECURE=="true",
-          // domain: process.env['APP_DOMAIN'],
-          domain: 'localhost', // zmienić na właściwy adres jeśli wypuszczamy na prod.
-          // domain: '4pages.pl', // zmienić na właściwy adres jeśli wypuszczamy na prod.
+          //secure: false, //jeśli localHost to false jesli bedzie na stronie 'https' to wtedy true
+          secure: config.NODE_ENV_SECURE=="true",
+          domain: config.DOMAIN,
+         // domain: 'localhost', // zmienić na właściwy adres jeśli wypuszczamy na prod.
+         // domain: '4pages.pl', // zmienić na właściwy adres jeśli wypuszczamy na prod.
           httpOnly: true,
         })
          .json({ isAuthenticated: true, id: user.id, role: user.role, email: user.email, date: new Date().getTime() });
@@ -84,8 +86,10 @@ export class AuthService {
       user.currentTokenId = null;
       await user.save();
       res.clearCookie('jwt', {
-        secure: false,
-        domain: process.env['APP_DOMAIN'],
+        //secure: false,
+        secure: config.NODE_ENV_SECURE=="true",
+        //domain: process.env['APP_DOMAIN'],
+        domain: config.DOMAIN,
         //domain: 'localhost',
         // domain: '4pages.pl',
         httpOnly: true,

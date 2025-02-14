@@ -50,7 +50,6 @@ export class AuthService {
           email: req.email,
           pwd: hashPwd(req.pwd),
       });
-      console.log(user);
       if (!user) {
         return res.status(404).json({
           error: 'Nie znaleziono użytkownika o podanym e-mailu!',
@@ -64,13 +63,11 @@ export class AuthService {
         });
       }
       const token = this.createToken(await this.generateToken(user));
-      console.log(token.expiresIn);
-      console.log( config.NODE_ENV_SECURE);
       return res
         .cookie('jwt', token.accessToken, {
-          //secure: false, //jeśli localHost to false jesli bedzie na stronie 'https' to wtedy true
-          secure: config.NODE_ENV_SECURE=="true",
-          domain: config.DOMAIN,
+         // secure: true, //jeśli localHost to false jesli bedzie na stronie 'https' to wtedy true
+         secure: config.NODE_ENV_SECURE=="true",
+         // domain: config.DOMAIN,
          // domain: 'localhost', // zmienić na właściwy adres jeśli wypuszczamy na prod.
          // domain: '4pages.pl', // zmienić na właściwy adres jeśli wypuszczamy na prod.
           httpOnly: true,
@@ -86,10 +83,10 @@ export class AuthService {
       user.currentTokenId = null;
       await user.save();
       res.clearCookie('jwt', {
-        //secure: false,
-        secure: config.NODE_ENV_SECURE=="true",
-        //domain: process.env['APP_DOMAIN'],
+        secure: true,
+        //secure: config.NODE_ENV_SECURE=="true",
         domain: config.DOMAIN,
+        //domain: config.DOMAIN,
         //domain: 'localhost',
         // domain: '4pages.pl',
         httpOnly: true,

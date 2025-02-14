@@ -5,6 +5,14 @@ export interface ProjectItemEntity {
   contact: string;
   quantityHours: number;
 }
+
+export interface ProjectBaseInfo {
+  id: string;
+  name: string;
+  description: string;
+  contact: string;
+}
+
 export type  GetTotalProjectHoursResponse = number;
 
 export interface ProjectSimpleRes {
@@ -21,6 +29,7 @@ export interface ProjectSimpleRes {
   excess: number;
   executive : number;
   control : number;
+  isActive: boolean;
 }
 export interface ProjectNameRes {
   id: string;
@@ -39,6 +48,7 @@ export interface CreateProject {
   excess: number;
   executive : number;
   control : number;
+  isActive: boolean;
 }
 export interface ListKindOfHourForProject {
   kindofwork: string;
@@ -51,5 +61,11 @@ export interface ListProjectRes {
   sumOfDone: number;
 }
 
+export interface ListProjectResArchive {
+  place: number;
+  project: ProjectBaseInfo;
+}
+
 export type ListProjectSimpleResAll = ListProjectRes[];
+export type ListProjectSimpleResArchive = ListProjectResArchive[];
 

@@ -56,8 +56,8 @@ export class ProjectEntity extends BaseEntity implements ProjectItemEntity {
   @Column({ default: 30 })
   control : number;
 
-  // @Column({default: true})
-  // isActive : boolean;
+  @Column({default: true})
+  isActive : boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

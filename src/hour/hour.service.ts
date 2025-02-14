@@ -298,12 +298,15 @@ export class HourService {
 
   async listProjectEmployeeKindeOfWorkAll(user: UsersEntity): Promise<ListAllToAddHoursRes> {
 
-    const projectList = (await ProjectEntity.find()).map((el) => ({
-      id: el.id,
-      name: el.name,
-    }));
+    const projectList = (await ProjectEntity.find())
+        .filter((el) => el.isActive)
+        .map((el) => ({
+          id: el.id,
+          name: el.name,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
 
-    const kindofworkList = (await KindOfWorkEntity.find()).map((el) => ({
+      const kindofworkList = (await KindOfWorkEntity.find()).map((el) => ({
       id: el.id,
       hourstype: el.hourstype,
     }));

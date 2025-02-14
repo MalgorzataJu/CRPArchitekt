@@ -15,6 +15,11 @@ export interface CreateHourRecord extends Omit<CreateHour, 'id'> {
     id?:string;
 }
 
+export interface CreateHoursNumber {
+    hours: number,
+    minutes: number,
+}
+
 export interface HourItemEntity {
     id?: string;
     quantity: number;

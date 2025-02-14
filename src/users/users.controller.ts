@@ -75,23 +75,4 @@ export class UsersController {
   // ): Promise<AvailableStudentData[]> {
   //   return await this.userService.getListOfAvailableStudents(data);
   // }
-  //
-  // @Get('/student-cv/:id')
-  // @UseGuards(AuthGuard('jwt'), RoleGuard)
-  // @Roles(UserRole.HR)
-  // async getStudentCv(@Param('id') id: string): Promise<StudentCvResponse> {
-  //   const studentProfile = await this.userService.getStudentProfileById(id);
-  //   const { user, ...StudentCvResponse } = studentProfile;
-  //   return { ...StudentCvResponse, email: user.email };
-  // }
-  //
-  // @Get('/reserved-students')
-  // @UseGuards(AuthGuard('jwt'), RoleGuard)
-  // @Roles(UserRole.HR)
-  // getReservedStudentsForRecruiter(
-  //   @Req() req: RequestWithUser,
-  //   @Query() data: GetListOfStudentsDto,
-  // ): Promise<ReservedStudentsResponse[]> {
-  //   return this.userService.getReservedStudentsForRecruiter(req.user.id, data);
-  // }
 }

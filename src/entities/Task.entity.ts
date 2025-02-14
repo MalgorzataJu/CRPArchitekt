@@ -39,4 +39,6 @@ export class TaskEntity extends BaseEntity implements TaskItemEntity{
     @ManyToOne(type => ProjectEntity, entity => entity.id)
     @JoinTable()
     project: ProjectEntity;
+
+
 }

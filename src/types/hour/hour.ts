@@ -15,6 +15,11 @@ export interface CreateHourRecord extends Omit<CreateHour, 'id'> {
     id?:string;
 }
 
+export interface CreateHoursNumber {
+    hours: number,
+    minutes: number,
+}
+
 export interface HourItemEntity {
     id?: string;
     quantity: number;
@@ -34,6 +39,12 @@ export interface ListHourRes {
     hour: HourItemEntity;
 }
 
+export interface  ListHourCountRes {
+    id: string
+    date: string;
+    quantity: number;
+}
+
 export interface ListHourResAll {
     place: number;
     hour: HoursItemRes;
@@ -49,4 +60,18 @@ export interface ListAllToAddHoursRes{
     projectList: ProjectNameRes[],
     kindofworkList:KindOfWorkItemEntityRes[],
 }
-
+export interface SimpleRest{
+    name:string,
+    total_quantity: string
+}
+// export interface SimpleRestHoursKOW{
+//     kinds_of_work:string,
+//     total_quantity: string
+// }
+export interface StatisticHoursForEmployee {
+    hoursCountPerDay: ListHourCountRes[],
+    hoursForProject : SimpleRest[],
+    hoursForKindeOfWork: SimpleRest[],
+    totalMonthlyHours: number,
+    totalMonthlyHoursForEmployee?:SimpleRest[],
+}

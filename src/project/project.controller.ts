@@ -4,7 +4,7 @@ import { CreateProjectDto } from "./dto/createProject.dto";
 import { UpdateProjectDto } from "./dto/updateProject.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { MyTimeoutInterceptor } from "../interceptors/my-timeout.interceptor";
-import {ListProjectSimpleResAll, ProjectItemEntity, UserRole} from "../types";
+import {ListProjectSimpleResAll, ListProjectSimpleResArchive, ProjectItemEntity, UserRole} from "../types";
 import {RoleGuard} from "../auth/role/role.guard";
 import {Roles} from "../auth/roles/roles.decorator";
 import {HourService} from "../hour/hour.service";
@@ -21,6 +21,13 @@ export class ProjectController {
   @Roles(UserRole.Boss,UserRole.Employee)
   async getProject(): Promise<ListProjectSimpleResAll> {
     return this.projectService.listAll();
+  }
+
+  @Get('/archive')
+  @UseGuards(AuthGuard('jwt'), RoleGuard)
+  @Roles(UserRole.Boss,UserRole.Employee)
+  async getArchive(): Promise<ListProjectSimpleResArchive> {
+    return this.projectService.listArchive();
   }
 
   @Get('/:id')

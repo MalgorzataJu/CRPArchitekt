@@ -10,7 +10,6 @@ import { HttpModule } from '@nestjs/axios';
   imports: [...TypeormImports, HttpModule],
   controllers: [AuthController, UsersController],
   providers: [
-
     AuthService,
     JwtStrategy,
     UsersService,

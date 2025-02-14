@@ -20,6 +20,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  await app.listen(3000);
+
+  await app.listen(config.APP_PORT);
 }
 bootstrap();
